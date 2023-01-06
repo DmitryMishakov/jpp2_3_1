@@ -10,8 +10,10 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
@@ -75,7 +77,28 @@ public class WebConfig implements WebMvcConfigurer {
         dataSource.setUrl(environment.getRequiredProperty("database.connection.url"));
         dataSource.setUsername(environment.getRequiredProperty("database.connection.username"));
         dataSource.setPassword(environment.getRequiredProperty("database.connection.password"));
+
+        dataSource.setInitialSize(Integer.parseInt(environment.getRequiredProperty("database.initialSize")));
+        dataSource.setMinIdle(Integer.parseInt(environment.getRequiredProperty("database.minIdle")));
+        dataSource.setMaxIdle(Integer.parseInt(environment.getRequiredProperty("database.maxIdle")));
+        dataSource
+                .setTimeBetweenEvictionRunsMillis(Long
+                        .parseLong(environment.getRequiredProperty("database.timeBetweenEvictionRunsMillis")));
+        dataSource
+                .setMinEvictableIdleTimeMillis(Long
+                        .parseLong(environment.getRequiredProperty("database.minEvictableIdleTimeMillis")));
+        dataSource.setTestOnBorrow(Boolean.parseBoolean(environment.getRequiredProperty("database.testOnBorrow")));
+        dataSource.setValidationQuery(environment.getRequiredProperty("database.validationQuery"));
+
         return dataSource;
+    }
+
+    @Bean
+    public PlatformTransactionManager platformTransactionManager() {
+        JpaTransactionManager manager = new JpaTransactionManager();
+        manager.setEntityManagerFactory(entityManagerFactory().getObject());
+
+        return manager;
     }
 
     @Bean
