@@ -18,6 +18,8 @@
       <spring.version>5.3.24</spring.version>
       <spring-data-jpa.version>3.0.0</spring-data-jpa.version>
       <hibernate-entitymanager.version>5.0.12.Final</hibernate-entitymanager.version>
+      <mysql-connector-java.version>8.0.27</mysql-connector-java.version>
+      <commons-dbcp2.version>2.9.0</commons-dbcp2.version>
   </properties>
 
   <dependencies>
@@ -28,6 +30,7 @@
       <version>${spring.version}</version>
     </dependency>
 
+<!--Web-->
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-webmvc</artifactId>
@@ -40,6 +43,8 @@
       <version>${javax.servlet-api.version}</version>
       <scope>provided</scope>
     </dependency>
+
+
 <!--Database-->
       <dependency>
           <groupId>org.springframework.data</groupId>
@@ -51,6 +56,18 @@
           <groupId>org.hibernate</groupId>
           <artifactId>hibernate-entitymanager</artifactId>
           <version>${hibernate-entitymanager.version}</version>
+      </dependency>
+
+      <dependency>
+          <groupId>mysql</groupId>
+          <artifactId>mysql-connector-java</artifactId>
+          <version>${mysql-connector-java.version}</version>
+      </dependency>
+
+      <dependency>
+          <groupId>org.apache.commons</groupId>
+          <artifactId>commons-dbcp2</artifactId>
+          <version>${commons-dbcp2.version}</version>
       </dependency>
 
       <!--Logger-->
