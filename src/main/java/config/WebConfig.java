@@ -1,6 +1,7 @@
 package config;
 
 
+import org.apache.commons.dbcp2.BasicDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -9,7 +10,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -70,7 +70,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Bean
     public DataSource dataSource() {
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        BasicDataSource dataSource = new BasicDataSource();
         dataSource.setDriverClassName(environment.getRequiredProperty("database.driver_class"));
         dataSource.setUrl(environment.getRequiredProperty("database.connection.url"));
         dataSource.setUsername(environment.getRequiredProperty("database.connection.username"));
@@ -100,9 +100,9 @@ public class WebConfig implements WebMvcConfigurer {
             properties.load(inputStream);
             return properties;
         } catch (IOException ex) {
-            logger.error("can't find property file", new IllegalArgumentException(ex));
+            logger.error("can't find property file");
+            throw new IllegalArgumentException(ex);
         }
-        return null;
     }
 
 }
