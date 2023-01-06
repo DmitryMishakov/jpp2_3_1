@@ -1,4 +1,4 @@
-//package model;
+//package com.mishakov.model;
 //
 //import org.hibernate.annotations.GenericGenerator;
 //
