@@ -1,14 +1,16 @@
 package com.mishakov.config;
 
-import jakarta.annotation.Resource;
+
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
@@ -22,8 +24,11 @@ import java.util.Properties;
 @PropertySource("classpath:db.properties")
 public class DatabaseConfig {
 
-    @Resource
     private Environment env;
+
+    public DatabaseConfig(Environment env) {
+        this.env = env;
+    }
 
     @Bean
     public DataSource dataSource() {
@@ -32,6 +37,16 @@ public class DatabaseConfig {
         ds.setDriverClassName(env.getRequiredProperty("db.driver_class"));
         ds.setUsername(env.getRequiredProperty("db.username"));
         ds.setPassword(env.getRequiredProperty("db.password"));
+
+        ds.setInitialSize(Integer.parseInt(env.getRequiredProperty("db.initialSize")));
+        ds.setMinIdle(Integer.parseInt(env.getRequiredProperty("db.minIdle")));
+        ds.setMaxIdle(Integer.parseInt(env.getRequiredProperty("db.maxIdle")));
+        ds.setTimeBetweenEvictionRunsMillis(Long
+                .parseLong(env.getRequiredProperty("db.timeBetweenEvictionRunsMillis")));
+        ds.setMinEvictableIdleTimeMillis(Long
+                .parseLong(env.getRequiredProperty("db.minEvictableIdleTimeMillis")));
+        ds.setTestOnBorrow(Boolean.parseBoolean(env.getRequiredProperty("db.testOnBorrow")));
+        ds.setValidationQuery(env.getRequiredProperty("db.validationQuery"));
 
         return ds;
     }
@@ -55,5 +70,12 @@ public class DatabaseConfig {
         } catch (IOException e) {
             throw new IllegalArgumentException("can't find hibernate properties", e);
         }
+    }
+
+    @Bean
+    public PlatformTransactionManager platformTransactionManager() {
+        JpaTransactionManager manager = new JpaTransactionManager();
+        manager.setEntityManagerFactory(entityManagerFactory().getObject());
+        return manager;
     }
 }
